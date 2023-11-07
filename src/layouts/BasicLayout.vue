@@ -1,6 +1,6 @@
 <template>
   <div class="basic-layout">
-    <h2>Menu</h2>
+    <Menu  />
     <div class="ui container">
       <slot></slot>
     </div>
@@ -8,7 +8,13 @@
 </template>
 
 <script>
-export default {};
+import Menu from '@/components/Menu.vue';
+export default {
+  name: 'BasicLayout',
+  components: {
+    Menu,
+  },
+};
 </script>
 
 <style></style>

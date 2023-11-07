@@ -30,7 +30,7 @@
 import { ref } from "vue";
 import * as Yup from "yup";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {auth} from "../../utils/firebase"
+import { auth } from "../../utils/firebase";
 export default {
   name: "Login",
   //Recibimos la función changeForm declarada en Auth  como prop
@@ -58,14 +58,13 @@ export default {
       formError.value = {};
       try {
         await schemaForm.validate(formData, { abortEarly: false });
-        
-        try{
-          const {email, password} = formData;
+
+        try {
+          const { email, password } = formData;
           await signInWithEmailAndPassword(auth, email, password);
-        }catch(error){
+        } catch (error) {
           console.log(error);
         }
-        
       } catch (err) {
         err.inner.forEach((error) => {
           formError.value[error.path] = error.message;
@@ -89,9 +88,13 @@ export default {
   width: 100%;
   max-width: 400px;
   padding: 30px;
-  background-color: #fff;
+  background: #0f0c29;
+  background: -webkit-linear-gradient(to top, #24243e, #302b63, #0f0c29);
+  background: linear-gradient(to top, #24243e, #302b63, #0f0c29);
+
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+  color: #fff;
 
   h1 {
     text-align: center;
