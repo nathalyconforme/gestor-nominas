@@ -29,8 +29,7 @@
 <script>
 import { ref } from "vue";
 import * as Yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../utils/firebase";
+import { auth, signInWithEmailAndPassword } from "../../utils/firebase";
 export default {
   name: "Login",
   //Recibimos la función changeForm declarada en Auth  como prop
@@ -63,7 +62,9 @@ export default {
           const { email, password } = formData;
           await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-          console.log(error);
+          error.code === "auth/invalid-login-credentials"
+          ? console.log("Credenciales inválidas") : console.log("Error desconocido");
+
         }
       } catch (err) {
         err.inner.forEach((error) => {

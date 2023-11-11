@@ -61,8 +61,8 @@ export default {
           console.log("Todo correcto");
           // !!!!!!!!!!AAQUIIII!!!!!!!!!!!!
         } catch (error) {
+          console.log("Este es el error");
           console.log(error);
-          messageError.value = error.message;
         }
       } catch (err) {
         err.inner.forEach((error) => {
@@ -93,6 +93,10 @@ export default {
 
     .field {
       margin: 0 5px;
+    }
+
+    .field:first-child {
+      border-left: 1px solid #ccc;
     }
   }
 

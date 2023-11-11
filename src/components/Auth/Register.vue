@@ -44,8 +44,8 @@
 import * as Yup from "yup";
 import { ref } from "vue";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../utils/firebase";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth ,createUserWithEmailAndPassword } from "../../utils/firebase";
 
 export default {
   name: "Register",
