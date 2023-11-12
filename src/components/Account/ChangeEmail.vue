@@ -30,6 +30,8 @@ import { ref } from "vue";
 import * as Yup from "yup";
 //Importación de la reautenticación de firebase
 import { reauthenticate } from "../../utils/firebaseFunctions";
+//Importación de auth de firebase
+import { auth, updateEmail } from "../../utils/firebase";
 
 export default {
   name: "ChangeEmail",
@@ -58,17 +60,20 @@ export default {
         try {
           const { email, password } = formData;
           await reauthenticate(password);
-          console.log("Todo correcto");
-          // !!!!!!!!!!AAQUIIII!!!!!!!!!!!!
+          await updateEmail(auth.currentUser, email);
+          console.log(auth.currentUser);
         } catch (error) {
-          console.log("Este es el error");
-          console.log(error);
+          messageError.value = error.message;
+          // error.code === "auth/invalid-login-credentials"
+          //   ? messageError.value = "Credenciales inválidas"
+          //   : ("Error desconocido");
         }
       } catch (err) {
         err.inner.forEach((error) => {
           formError.value[error.path] = error.message;
         });
         loading.value = false;
+        // email.value = "";
       }
     };
 

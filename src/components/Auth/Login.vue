@@ -63,15 +63,18 @@ export default {
           await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
           error.code === "auth/invalid-login-credentials"
-          ? console.log("Credenciales inválidas") : console.log("Error desconocido");
-
+            ? console.log("Credenciales inválidas")
+            : console.log("Error desconocido");
         }
       } catch (err) {
         err.inner.forEach((error) => {
+          console.log("Error de validación");
           formError.value[error.path] = error.message;
         });
+      } finally {
+        //Ocultamos el spinner
+        loading.value = false;
       }
-      loading.value = false;
     };
 
     return {

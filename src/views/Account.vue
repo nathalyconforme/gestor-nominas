@@ -16,6 +16,12 @@
       </p>
       <ChangeEmail />
     </div>
+    <div class="account__section">
+      <p class="title">
+        Cambiar contraseña
+      </p>
+      <ChangePassword />
+    </div>
   </div>
 </template>
 
@@ -30,13 +36,15 @@ import BasicLayout from "@/layouts/BasicLayout.vue";
 //Importación de changeName
 import ChangeName from "@/components/Account/ChangeName.vue";
 import ChangeEmail from "@/components/Account/ChangeEmail.vue";
+import ChangePassword from "../components/Account/ChangePassword.vue";
 
 export default {
   name: "Account",
   components: {
     BasicLayout,
     ChangeName,
-    ChangeEmail
+    ChangeEmail,
+    ChangePassword,
   },
   setup() {
     //Importación de store

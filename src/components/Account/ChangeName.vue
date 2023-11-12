@@ -63,6 +63,7 @@ export default {
         });
       }
       loading.value = false;
+      name.value = "";
     };
     return {
       name,

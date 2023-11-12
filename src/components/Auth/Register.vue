@@ -44,7 +44,6 @@
 import * as Yup from "yup";
 import { ref } from "vue";
 
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth ,createUserWithEmailAndPassword } from "../../utils/firebase";
 
 export default {
@@ -56,7 +55,7 @@ export default {
     },
   },
   setup() {
-    //Creamos variable formDataa
+    //Creamos variable formData
     let formData = {};
 
     //Creamos objeto formError con ref para que sea reactivo
@@ -91,15 +90,17 @@ export default {
           const { email, password } = formData;
           await createUserWithEmailAndPassword(auth, email, password);
         } catch (error) {
-          console.log(error);
+          error.code === "auth/email-already-in-use"
+          ? console.log("Introduce otro correo") : console.log("Error desconocido");
         }
       } catch (err) {
         err.inner.forEach((error) => {
           formError.value[error.path] = error.message;
         });
+      }finally{
+        //Ocultamos el spinner
+        loading.value = false;
       }
-      //Ocultamos el spinner
-      loading.value = false;
     };
     return {
       formData,
