@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <button class="ui button positive">Subir nómina</button>
+      <button class="ui button positive" :class="{loading}">Subir nómina</button>
       <p v-if="error">{{error}}</p>
     </form>
   </div>
@@ -41,6 +41,9 @@
 
 <script>
 import { ref } from "vue";
+import { v4 as uuidv4 } from "uuid";
+import { auth, storage, ref as storageRef, uploadBytes} from "../../utils/firebase"
+
 export default {
   name: "UploadPayroll",
   setup() {
@@ -69,14 +72,37 @@ export default {
       date.value = e.target.value;
     };
 
-    const handleSubmit = () => {
-      // console.log("Subiendo nómina...");
-      // console.log("FILE --> ", file.value);
-      // console.log("DATE --> ", date.value);
-
-
+    const handleSubmit = async () => {
       if (file.value && date.value){
-        console.log("Subiendo nómina...");
+        loading.value = true;
+        
+        try {
+          /**
+           * 
+           * SUBIENDO EL FICHERO A FIREBASE STORAGE
+           * 
+          */
+
+
+          //Usamos uuid para generar un nombre único para el fichero
+          const fileName = uuidv4();
+
+
+          //Creamos la ruta donde se guardará el fichero
+          const path = `${auth.currentUser.uid}/${fileName}.pdf`;
+
+
+          //Creamos una referencia al fichero usando el ref de firebase al que se ha designado el nombre "storageRef"
+          const storageReference = storageRef(storage, path);
+
+          //Subimos el fichero a la ruta que hemos creado
+          await uploadBytes(storageReference, file.value);
+
+        } catch (error) {
+          console.log(error);
+        }finally{
+          loading.value = false;
+        }
       }
     };
 
