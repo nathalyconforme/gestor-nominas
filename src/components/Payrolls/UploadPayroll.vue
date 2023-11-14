@@ -16,7 +16,7 @@
         <label for="file" class="ui icon button">
           <i class="file icon" />
           Seleccionar nómina
-          <span v-if="file">({{file.name}})</span>
+          <span v-if="file">({{ file.name }})</span>
         </label>
         <input
           type="file"
@@ -28,13 +28,20 @@
       <div class="field">
         <div class="ui calendar">
           <div class="ui input left icon">
-            <input type="date" name="" id="" @change="changeDate"
-            :value="date" />
+            <input
+              type="date"
+              name=""
+              id=""
+              @change="changeDate"
+              :value="date"
+            />
           </div>
         </div>
       </div>
-      <button class="ui button positive" :class="{loading}">Subir nómina</button>
-      <p v-if="error">{{error}}</p>
+      <button class="ui button positive" :class="{ loading }">
+        Subir nómina
+      </button>
+      <p v-if="error">{{ error }}</p>
     </form>
   </div>
 </template>
@@ -42,7 +49,16 @@
 <script>
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
-import { auth, storage, ref as storageRef, uploadBytes} from "../../utils/firebase"
+import {
+  auth,
+  storage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+  db,
+  collection,
+  addDoc,
+} from "../../utils/firebase";
 
 export default {
   name: "UploadPayroll",
@@ -63,7 +79,7 @@ export default {
 
       if (fileTemp.type === "application/pdf") {
         file.value = fileTemp;
-      }else{
+      } else {
         error.value = "El fichero debe ser válido (PDF)";
       }
     };
@@ -73,36 +89,55 @@ export default {
     };
 
     const handleSubmit = async () => {
-      if (file.value && date.value){
+      if (file.value && date.value) {
         loading.value = true;
-        
+
         try {
           /**
-           * 
+           *
            * SUBIENDO EL FICHERO A FIREBASE STORAGE
-           * 
-          */
-
-
+           *
+           */
           //Usamos uuid para generar un nombre único para el fichero
           const fileName = uuidv4();
-
+          const userID = auth.currentUser.uid;
 
           //Creamos la ruta donde se guardará el fichero
-          const path = `${auth.currentUser.uid}/${fileName}.pdf`;
+          const path = `${userID}/${fileName}.pdf`;
 
-
-          //Creamos una referencia al fichero usando el ref de firebase al que se ha designado el nombre "storageRef"
+          /**
+           * Creamos una referencia al fichero usando el ref de firebase
+           * al que se ha designado el nombre "storageRef"
+           * */
           const storageReference = storageRef(storage, path);
 
           //Subimos el fichero a la ruta que hemos creado
           await uploadBytes(storageReference, file.value);
-
+          /**
+           *
+           * SUBIENDO EL FICHERO A FIRESTORE
+           *
+           */
+          //Obtenemos la URL del fichero que hemos subido
+          const payrollUrl = await getDownloadURL(storageReference);
+          // Guardamos la información en la base de datos
+          await addDoc(collection(db, userID), {
+            payrollUrl,
+            date: new Date(date.value),
+            dateCreated: date.value, /* Esto en String */
+          });
         } catch (error) {
           console.log(error);
-        }finally{
+        } finally {
           loading.value = false;
+          file.value = null;
+          date.value = null;
+          showForm.value = false;
+          error.value = null;
+          document.getElementById("file").value = "";
         }
+      }else{
+        error.value = "Sube una nómina y selecciona la fecha";
       }
     };
 
