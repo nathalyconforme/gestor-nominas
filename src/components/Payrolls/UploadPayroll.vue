@@ -62,7 +62,10 @@ import {
 
 export default {
   name: "UploadPayroll",
-  setup() {
+  props:{
+    getPayrolls: Function,
+  },
+  setup(props){
     let showForm = ref(false);
     let file = ref(null);
     let date = ref(null);
@@ -126,6 +129,8 @@ export default {
             date: new Date(date.value),
             dateCreated: date.value, /* Esto en String */
           });
+          //Actualizamos la lista de nóminas usando la función que nos llega por props
+          props.getPayrolls();
         } catch (error) {
           console.log(error);
         } finally {
